@@ -38,13 +38,20 @@ class PostsController < ApplicationController
   end
   
   def vote
-    vote = Vote.create(voteable: @post, creator: current_user, vote: params[:vote])
-    if vote.valid?
-      flash[:notice] = "Your vote is counted!"
-    else
-      flash[:error] = "You can only vote once."
+    @vote = Vote.create(voteable: @post, creator: current_user, vote: params[:vote])
+    
+    respond_to do |format|
+      format.html do #we do nothing it it is html
+        if @vote.valid?
+          flash[:notice] = "Your vote is counted!"
+        else
+          flash[:error] = "You can only vote once."
+        end
+        redirect_to :back #redirect back where you came from
+      end
+      format.js #looking for js template
     end
-    redirect_to :back #redirect back where you came from
+    
   end
   
   private
